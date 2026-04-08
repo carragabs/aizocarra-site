@@ -1,0 +1,615 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aizo&carra — Streetwear juvenil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0b0b;
+      --bg2:#111111;
+      --card:#151515;
+      --line:#262626;
+      --soft:#a7a7a7;
+      --text:#f4f4f4;
+      --white:#ffffff;
+      --accent:#d9d9d9;
+      --blue:#3B5BDB;
+      --shadow:0 18px 48px rgba(0,0,0,.35);
+      --radius:20px;
+      --radius-sm:12px;
+      --max:1280px;
+      --logo:'Oswald', sans-serif;
+      --body:'Inter', sans-serif;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:var(--body);
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.05), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(255,255,255,.035), transparent 24%),
+        var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+      cursor:none;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    .cur,.curR{
+      position:fixed;top:0;left:0;
+      pointer-events:none;
+      transform:translate(-50%,-50%);
+      will-change:transform;
+    }
+    .cur{
+      width:8px;height:8px;
+      background:var(--white);
+      border-radius:50%;
+      z-index:9999;
+      transition:width .15s,height .15s,background .2s;
+    }
+    .curR{
+      width:32px;height:32px;
+      border:1px solid rgba(255,255,255,.3);
+      border-radius:50%;
+      z-index:9998;
+      transition:width .3s,height .3s,border-color .3s;
+    }
+    .cur.big{width:14px;height:14px;background:var(--blue)}
+    .curR.big{width:52px;height:52px;border-color:rgba(59,91,219,.5)}
+    @media(hover:none),(max-width:768px){
+      .cur,.curR{display:none}
+      body{cursor:auto}
+    }
+    a{text-decoration:none;color:inherit}
+    img{display:block;max-width:100%}
+    button{font:inherit}
+
+    /* LOGO */
+    .logo-svg{height:44px;width:auto;display:block}
+    .logo-sm {height:34px;width:auto;display:block}
+
+    /* SLOGAN */
+    .logo-wrap{display:flex;flex-direction:column;gap:5px;text-decoration:none;cursor:pointer}
+    .slogan-nav{
+      font-family:'Inter','Helvetica Neue',Arial,sans-serif;
+      font-size:9px;font-weight:600;
+      letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(255,255,255,.38);
+      line-height:1;white-space:nowrap;
+    }
+    .slogan-footer{
+      font-family:'Inter','Helvetica Neue',Arial,sans-serif;
+      font-size:10px;font-weight:500;
+      letter-spacing:.13em;text-transform:uppercase;
+      color:rgba(255,255,255,.38);
+      line-height:1.75;
+      margin-top:7px;
+    }
+    .slogan-footer span{display:block}
+
+    .wrap{width:min(var(--max), calc(100% - 32px)); margin:0 auto}
+    .label{
+      display:inline-flex;align-items:center;gap:10px;
+      font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--soft)
+    }
+    .label::before{content:"";width:30px;height:1px;background:var(--soft)}
+    .section{padding:92px 0}
+
+    .site-header{
+      position:sticky;top:0;z-index:100;
+      backdrop-filter:blur(14px);
+      background:rgba(11,11,11,.72);
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .nav{
+      min-height:76px;
+      display:flex;align-items:center;justify-content:space-between;gap:20px
+    }
+    .nav-links{display:flex;gap:28px;align-items:center}
+    .nav-links a{
+      font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#d2d2d2;
+      transition:opacity .2s ease, transform .2s ease
+    }
+    .nav-links a:hover{opacity:.75;transform:translateY(-1px)}
+    .nav-actions{display:flex;gap:12px;align-items:center}
+
+    .btn,.btn-outline{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      min-height:48px;padding:0 22px;border-radius:999px;font-size:12px;font-weight:800;
+      letter-spacing:.16em;text-transform:uppercase;transition:.25s ease;cursor:pointer
+    }
+    .btn{border:1px solid var(--white);background:var(--white);color:var(--bg)}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(255,255,255,.12)}
+    .btn-outline{border:1px solid rgba(255,255,255,.16);background:transparent;color:var(--white)}
+    .btn-outline:hover{background:rgba(255,255,255,.06);transform:translateY(-2px)}
+
+    .hero{padding:54px 0 40px}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:stretch}
+    .hero-copy,.hero-visual{
+      border:1px solid rgba(255,255,255,.08);border-radius:32px;overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));box-shadow:var(--shadow)
+    }
+    .hero-copy{
+      padding:38px 38px 34px;display:flex;flex-direction:column;justify-content:space-between;
+      min-height:690px;position:relative
+    }
+    .hero-copy::after{
+      content:"A&C";position:absolute;right:16px;bottom:-18px;
+      font-family:var(--logo);font-size:170px;line-height:1;color:rgba(255,255,255,.03);pointer-events:none
+    }
+    .eyebrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:26px}
+    .pill{
+      border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:8px 12px;
+      font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#d8d8d8
+    }
+    .hero h1{
+      font-family:var(--logo);font-size:clamp(64px,10vw,136px);line-height:.9;
+      text-transform:uppercase;letter-spacing:-.01em;max-width:720px
+    }
+    .hero h1 .stroke{-webkit-text-stroke:1px var(--white);color:transparent;display:block}
+    .hero p.lead{max-width:520px;font-size:16px;line-height:1.8;color:#c1c1c1;margin:24px 0 32px}
+    .hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+    .hero-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
+    .meta-box{border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px;background:rgba(255,255,255,.02)}
+    .meta-box strong{display:block;font-size:26px;font-weight:900;margin-bottom:5px}
+    .meta-box span{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--soft)}
+
+    .hero-visual{display:grid;grid-template-rows:1fr auto;min-height:690px}
+    .hero-main{position:relative;background:#0d0d0d;display:flex;align-items:flex-end;justify-content:center;padding:20px}
+    .hero-main::before{
+      content:"";position:absolute;inset:0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.02), transparent 18%),
+        linear-gradient(135deg, rgba(255,255,255,.03), transparent 42%),
+        radial-gradient(circle at center, rgba(255,255,255,.06), transparent 42%);
+      pointer-events:none
+    }
+    .hero-main img{width:100%;height:100%;object-fit:cover;border-radius:24px;filter:contrast(1.04) saturate(1.02)}
+    .hero-caption{
+      display:flex;justify-content:space-between;gap:18px;align-items:center;
+      padding:18px 22px;border-top:1px solid rgba(255,255,255,.08)
+    }
+    .hero-caption p{font-size:13px;color:#d4d4d4;max-width:420px;line-height:1.65}
+    .hero-caption b{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--white)}
+
+    .ticker{
+      margin:26px 0 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);
+      background:#101010;overflow:hidden
+    }
+    .ticker-track{display:flex;min-width:max-content;animation:ticker 22s linear infinite}
+    .ticker-item{padding:16px 28px;font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#d0d0d0}
+    @keyframes ticker{to{transform:translateX(-50%)}}
+
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:34px;flex-wrap:wrap}
+    .section-head h2{font-family:var(--logo);font-size:clamp(38px,6vw,86px);line-height:.92;text-transform:uppercase}
+    .section-head p{max-width:420px;color:#bdbdbd;line-height:1.8;font-size:15px}
+
+    .products{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border-radius:24px;overflow:hidden;transition:transform .28s ease, border-color .28s ease, box-shadow .28s ease
+    }
+    .card:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.14);box-shadow:var(--shadow)}
+    .card-media{position:relative;aspect-ratio:4/5;overflow:hidden;background:#111}
+    .card-media img{width:100%;height:100%;object-fit:cover;transition:transform .45s ease}
+    .card:hover .card-media img{transform:scale(1.045)}
+    .badge{
+      position:absolute;top:14px;left:14px;padding:8px 10px;border-radius:999px;
+      background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);
+      font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase
+    }
+    .card-body{padding:18px}
+    .card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px}
+    .card-title{font-weight:900;font-size:18px;line-height:1.25}
+    .price{font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+    .card-copy{font-size:14px;line-height:1.7;color:#bfbfbf;margin-bottom:16px}
+    .chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+    .chip{
+      border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:7px 10px;
+      font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#d8d8d8
+    }
+    .card-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+    .split{display:grid;grid-template-columns:.92fr 1.08fr;gap:20px;align-items:stretch}
+    .lookbook-card,.story-card{
+      border:1px solid rgba(255,255,255,.08);border-radius:30px;overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));box-shadow:var(--shadow)
+    }
+    .lookbook-card img{width:100%;height:100%;object-fit:cover;min-height:680px}
+    .story-card{padding:34px}
+    .story-card h3{
+      font-family:var(--logo);font-size:clamp(40px,6.2vw,88px);
+      line-height:.92;text-transform:uppercase;margin:18px 0 20px
+    }
+    .story-card p{font-size:15px;line-height:1.9;color:#c0c0c0;max-width:650px}
+    .story-points{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:32px 0}
+    .story-points .point{
+      border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px;background:rgba(255,255,255,.02)
+    }
+    .point strong{display:block;font-size:28px;font-weight:900;margin-bottom:6px}
+    .point span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .panel{
+      border:1px solid rgba(255,255,255,.08);border-radius:24px;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));padding:26px
+    }
+    .panel h3{font-family:var(--logo);font-size:44px;line-height:.92;text-transform:uppercase;margin:14px 0 12px}
+    .panel p{color:#c0c0c0;line-height:1.85;font-size:15px}
+    .list{display:grid;gap:12px;margin-top:18px}
+    .list-item{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .list-item:last-child{border-bottom:none}
+    .list-item b{font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+    .list-item span{color:#c0c0c0;text-align:right}
+
+    .cta{
+      border:1px solid rgba(255,255,255,.08);border-radius:32px;padding:36px;
+      background:linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.015));
+      display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:center;box-shadow:var(--shadow)
+    }
+    .cta h2{font-family:var(--logo);font-size:clamp(44px,7vw,96px);line-height:.9;text-transform:uppercase}
+    .cta p{font-size:16px;line-height:1.8;color:#c6c6c6;max-width:600px;margin-top:16px}
+    .cta-box{border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:24px;background:rgba(255,255,255,.02)}
+    .cta-box .mini{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);font-weight:800}
+    .cta-box .big{font-size:28px;font-weight:900;line-height:1.25;margin:10px 0 18px}
+    .socials{display:flex;gap:10px;flex-wrap:wrap}
+
+    footer{padding:34px 0 46px;border-top:1px solid rgba(255,255,255,.08);margin-top:92px}
+    .footer-grid{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+    .footer-copy{color:#9e9e9e;font-size:13px;margin-top:8px}
+    .footer-links{display:flex;gap:18px;flex-wrap:wrap}
+    .footer-links a{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#d7d7d7}
+
+    @media(max-width:1100px){
+      .hero-grid,.split,.cta{grid-template-columns:1fr}
+      .hero-copy,.hero-visual{min-height:auto}
+      .hero-main{min-height:540px}
+      .products{grid-template-columns:repeat(2,1fr)}
+      .story-points{grid-template-columns:1fr 1fr 1fr}
+    }
+    @media(max-width:760px){
+      .nav{min-height:72px}
+      .nav-links{display:none}
+      .hero{padding-top:22px}
+      .hero-copy{padding:24px 22px 24px;border-radius:24px}
+      .hero-main{padding:14px;min-height:420px}
+      .hero-caption{padding:14px 16px;flex-direction:column;align-items:flex-start}
+      .hero-meta,.grid-2,.story-points,.products{grid-template-columns:1fr}
+      .section{padding:72px 0}
+      .section-head h2,.story-card h3,.panel h3{font-size:clamp(36px,12vw,58px)}
+      .story-card{padding:24px}
+      .cta{padding:24px}
+      .footer-grid{align-items:flex-start;flex-direction:column}
+      .hero h1{font-size:clamp(54px,18vw,92px)}
+      .logo-svg{height:36px}
+      .logo-sm{height:28px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CURSOR -->
+  <div class="cur" id="cur"></div>
+  <div class="curR" id="curR"></div>
+
+  <!-- HEADER NAV -->
+  <header class="site-header">
+    <div class="wrap nav">
+
+      <!-- LOGO: fiel al original — "aizo" blanco suelto, "&" azul serif, "carra" en caja blanca -->
+      <a href="#top" aria-label="aizo&carra inicio" class="logo-wrap">
+        <svg class="logo-svg" viewBox="0 0 230 58" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- "aizo" blanco, weight 900, minúsculas -->
+          <text x="0" y="44"
+            font-family="'Inter','Helvetica Neue',Arial,sans-serif"
+            font-weight="900" font-size="46"
+            fill="white" letter-spacing="-1">aizo</text>
+          <!-- caja blanca detrás de "carra" -->
+          <rect x="101" y="10" width="129" height="46" fill="white" rx="3"/>
+          <!-- "carra" negro sobre caja -->
+          <text x="108" y="48"
+            font-family="'Inter','Helvetica Neue',Arial,sans-serif"
+            font-weight="900" font-size="40"
+            fill="#0b0b0b" letter-spacing="-1">carra</text>
+          <!-- "&" azul serif, superpuesto entre los dos bloques -->
+          <text x="91" y="32"
+            font-family="Georgia,'Times New Roman',serif"
+            font-weight="700" font-size="24"
+            fill="#3B5BDB">&#38;</text>
+        </svg>
+        <span class="slogan-nav">Streetwear sin permiso — Real. Libre. Sin filtro.</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Principal">
+        <a href="#drop">Drop</a>
+        <a href="#productos">Productos</a>
+        <a href="#story">Marca</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="btn-outline" href="#productos">Shop</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div>
+            <div class="eyebrow">
+              <span class="pill">Drop 001</span>
+              <span class="pill">Honduras</span>
+              <span class="pill">Street youth</span>
+            </div>
+            <h1>Viste <span class="stroke">tu ruido</span></h1>
+            <p class="lead">Streetwear para los que no encajan. Real. Libre. Sin filtro. Piezas con actitud para mostrarse tal como eres, sin pedir permiso.</p>
+            <div class="hero-actions">
+              <a class="btn" href="#productos">Comprar ahora</a>
+              <a class="btn-outline" href="#story">Ver la marca</a>
+            </div>
+          </div>
+          <div class="hero-meta">
+            <div class="meta-box"><strong>18–30</strong><span>Público central</span></div>
+            <div class="meta-box"><strong>Drop</strong><span>Lanzamientos cortos</span></div>
+            <div class="meta-box"><strong>Street</strong><span>Actitud + gráfico</span></div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-main">
+            <img src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?auto=format&fit=crop&w=1200&q=80" alt="Modelo con streetwear" />
+          </div>
+          <div class="hero-caption">
+            <div>
+              <b>Dirección visual</b>
+              <p>Base monocromática para que el producto explote. La marca se ve limpia; la camiseta se roba la atención.</p>
+            </div>
+            <a class="btn-outline" href="#drop">Ver colección</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker-track">
+          <span class="ticker-item">aizo&amp;carra</span>
+          <span class="ticker-item">Streetwear juvenil</span>
+          <span class="ticker-item">Drops limitados</span>
+          <span class="ticker-item">Diseño propio</span>
+          <span class="ticker-item">Gráfico con actitud</span>
+          <span class="ticker-item">Honduras 🇭🇳</span>
+          <span class="ticker-item">aizo&amp;carra</span>
+          <span class="ticker-item">Streetwear juvenil</span>
+          <span class="ticker-item">Drops limitados</span>
+          <span class="ticker-item">Diseño propio</span>
+          <span class="ticker-item">Gráfico con actitud</span>
+          <span class="ticker-item">Honduras 🇭🇳</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- DROP -->
+    <section class="section" id="drop">
+      <div class="wrap split">
+        <div class="lookbook-card">
+          <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=1200&q=80" alt="Lookbook streetwear" />
+        </div>
+        <div class="story-card">
+          <span class="label">Drop actual</span>
+          <h3>Para los que no encajan</h3>
+          <p>Aizo&amp;Carra es una marca hondureña de streetwear creada para quienes no piden permiso para ser quienes son. No creemos en la perfección. Creemos en lo real.</p>
+          <div class="story-points">
+            <div class="point"><strong>BW</strong><span>Marca monocroma</span></div>
+            <div class="point"><strong>01</strong><span>Drop principal</span></div>
+            <div class="point"><strong>HN</strong><span>Origen local</span></div>
+          </div>
+          <div class="card-actions">
+            <a class="btn" href="#productos">Entrar al shop</a>
+            <a class="btn-outline" href="#contacto">Hablar por Instagram</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTOS -->
+    <section class="section" id="productos">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="label">Productos</span>
+            <h2>Piezas con más tracción</h2>
+          </div>
+          <p>Creamos piezas premium accesibles — camisetas, hoodies y gorras — diseñadas para expresar actitud, libertad y autenticidad sin perder impacto visual.</p>
+        </div>
+        <div class="products">
+          <article class="card">
+            <div class="card-media">
+              <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80" alt="Camiseta negra streetwear" />
+              <span class="badge">Best seller</span>
+            </div>
+            <div class="card-body">
+              <div class="card-top">
+                <h3 class="card-title">DROPS — Negro</h3>
+                <span class="price">L 450</span>
+              </div>
+              <p class="card-copy">La gráfica protagonista. Negro base, color arriba y actitud al frente.</p>
+              <div class="chip-row">
+                <span class="chip">Drop 001</span>
+                <span class="chip">Regular fit</span>
+                <span class="chip">Street</span>
+              </div>
+              <div class="card-actions">
+                <a class="btn" href="#contacto">Pedir</a>
+                <a class="btn-outline" href="#story">Detalles</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-media">
+              <img src="https://images.unsplash.com/photo-1503342394128-c104d54dba01?auto=format&fit=crop&w=900&q=80" alt="Camiseta blanca streetwear" />
+              <span class="badge">Nuevo</span>
+            </div>
+            <div class="card-body">
+              <div class="card-top">
+                <h3 class="card-title">DROPS — Blanco</h3>
+                <span class="price">L 450</span>
+              </div>
+              <p class="card-copy">La versión clara para empujar más contraste. Misma vibra, otra energía.</p>
+              <div class="chip-row">
+                <span class="chip">Blanco</span>
+                <span class="chip">Color pop</span>
+                <span class="chip">Juvenil</span>
+              </div>
+              <div class="card-actions">
+                <a class="btn" href="#contacto">Pedir</a>
+                <a class="btn-outline" href="#drop">Ver drop</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-media">
+              <img src="img/CCLO.jpeg" alt="Camiseta personalizada" />
+              <span class="badge">Custom</span>
+            </div>
+            <div class="card-body">
+              <div class="card-top">
+                <h3 class="card-title">Personalizada</h3>
+                <span class="price">L 400+</span>
+              </div>
+              <p class="card-copy">Diseño por pedido. Tu texto, tu concepto. 1 pieza mínimo, entrega rápida.</p>
+              <div class="chip-row">
+                <span class="chip">A pedido</span>
+                <span class="chip">1 pieza mínimo</span>
+                <span class="chip">Rápido</span>
+              </div>
+              <div class="card-actions">
+                <a class="btn" href="#contacto">Cotizar</a>
+                <a class="btn-outline" href="#contacto">WhatsApp</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- STORY -->
+    <section class="section" id="story">
+      <div class="wrap grid-2">
+        <div class="panel">
+          <span class="label">Marca</span>
+          <h3>Real. Libre. Sin filtro.</h3>
+          <p>Aizo&amp;Carra no es solo ropa. Es una forma de decir quién eres, sin tener que explicarlo. Diseñamos piezas que transmiten identidad, libertad y actitud desde una estética street clara y joven.</p>
+          <div class="list">
+            <div class="list-item"><b>Autenticidad</b><span>No fingimos. Todo nace de lo real.</span></div>
+            <div class="list-item"><b>Libertad</b><span>Ser quien eres, sin permiso.</span></div>
+            <div class="list-item"><b>Actitud</b><span>No buscamos encajar.</span></div>
+            <div class="list-item"><b>Identidad</b><span>Cada prenda representa algo.</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <span class="label">Esencia</span>
+          <h3>Premium accesible con identidad real</h3>
+          <p>Creemos en productos con calidad premium, pero alcanzables. No vendemos solo prendas: construimos conexión con personas que piensan distinto, viven sin filtros y usan la ropa como extensión de lo que son.</p>
+          <div class="list">
+            <div class="list-item"><b>Misión</b><span>Crear streetwear accesible con carácter y autenticidad.</span></div>
+            <div class="list-item"><b>Visión</b><span>Ser referente de streetwear en Honduras y LATAM.</span></div>
+            <div class="list-item"><b>Conexión</b><span>No solo ropa. También pertenencia.</span></div>
+            <div class="list-item"><b>Evolución</b><span>Crecer sin perder la esencia.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="section" id="contacto">
+      <div class="wrap cta">
+        <div>
+          <span class="label">Contacto</span>
+          <h2>Muéstrate tal como eres</h2>
+          <p>Pedidos, colaboraciones o dudas. Si conectas con la marca, escríbenos. Estamos construyendo una comunidad para quienes viven sin filtros, sin miedo y sin pedir permiso.</p>
+        </div>
+        <div class="cta-box">
+          <div class="mini">Canales sugeridos</div>
+          <div class="big">Instagram para conectar. WhatsApp para cerrar. La marca primero, siempre.</div>
+          <div class="socials">
+            <a class="btn" href="https://instagram.com/aizocarra" target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a class="btn-outline" href="https://wa.me/50400000000" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap footer-grid">
+      <div>
+        <!-- Logo footer (versión pequeña) -->
+        <svg class="logo-sm" viewBox="0 0 210 52" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <text x="0" y="40"
+            font-family="'Inter','Helvetica Neue',Arial,sans-serif"
+            font-weight="900" font-size="42"
+            fill="white" letter-spacing="-1">aizo</text>
+          <rect x="93" y="10" width="117" height="40" fill="white" rx="3"/>
+          <text x="99" y="43"
+            font-family="'Inter','Helvetica Neue',Arial,sans-serif"
+            font-weight="900" font-size="36"
+            fill="#0b0b0b" letter-spacing="-1">carra</text>
+          <text x="83" y="28"
+            font-family="Georgia,'Times New Roman',serif"
+            font-weight="700" font-size="20"
+            fill="#3B5BDB">&#38;</text>
+        </svg>
+        <div class="footer-copy">Marca hondureña de streetwear — Honduras 🇭🇳</div>
+        <div class="slogan-footer">
+          <span>Streetwear sin permiso.</span>
+          <span>Real. Libre. Sin filtro.</span>
+          <span>Para los que no encajan.</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="#drop">Drop</a>
+        <a href="#productos">Shop</a>
+        <a href="#story">Marca</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── CURSOR ── */
+    const CUR = document.getElementById('cur');
+    const CRR = document.getElementById('curR');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+    (function loop() {
+      CUR.style.transform = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
+      rx += (mx - rx) * 0.09;
+      ry += (my - ry) * 0.09;
+      CRR.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%)`;
+      requestAnimationFrame(loop);
+    })();
+
+    /* Grow on interactive elements */
+    document.querySelectorAll('a, button, .card, .btn, .btn-outline').forEach(el => {
+      el.addEventListener('mouseenter', () => { CUR.classList.add('big'); CRR.classList.add('big'); });
+      el.addEventListener('mouseleave', () => { CUR.classList.remove('big'); CRR.classList.remove('big'); });
+    });
+  </script>
+</body>
+</html>

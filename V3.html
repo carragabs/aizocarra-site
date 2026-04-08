@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aizo&carra — Drop 001</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blk:#0a0a0a; --wht:#f5f5f0; --grey:#161616;
+  --mid:#2a2a2a; --mut:#777; --blue:#5B6BF8;
+  --fd:'Barlow Condensed',sans-serif;
+  --fb:'Barlow',sans-serif;
+  --fm:'Space Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--blk);color:var(--wht);font-family:var(--fb);font-weight:300;overflow-x:hidden;cursor:none}
+img{max-width:100%;display:block}
+
+/* CURSOR */
+.cur,.curR{position:fixed;top:0;left:0;pointer-events:none;transform:translate(-50%,-50%);will-change:transform}
+.cur{width:8px;height:8px;background:var(--wht);border-radius:50%;z-index:9999;transition:width .15s,height .15s,background .2s}
+.curR{width:32px;height:32px;border:1px solid rgba(245,245,240,.3);border-radius:50%;z-index:9998;transition:width .3s,height .3s,border-color .3s}
+.cur.big{width:14px;height:14px;background:var(--blue)}
+.curR.big{width:52px;height:52px;border-color:rgba(91,107,248,.5)}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:18px 40px;
+  display:flex;justify-content:space-between;align-items:center;
+  background:linear-gradient(to bottom,rgba(10,10,10,.85) 0%,transparent 100%);
+  transition:background .3s,padding .3s;
+}
+nav.stuck{background:rgba(10,10,10,.97);border-bottom:1px solid var(--mid);padding:12px 40px}
+.nav-r{display:flex;align-items:center;gap:24px}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-family:var(--fm);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,245,240,.6);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--wht)}
+.nbtn{font-family:var(--fm);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--wht);background:none;border:none;cursor:pointer;opacity:.65;transition:opacity .2s;white-space:nowrap}
+.nbtn:hover{opacity:1}
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.ham span{display:block;width:22px;height:1.5px;background:var(--wht);transition:transform .3s,opacity .3s}
+
+/* LOGO */
+.logo-lnk{text-decoration:none;cursor:pointer;display:flex;align-items:center}
+.logo-svg{height:26px;width:auto}
+
+/* MOBILE MENU */
+.mob-menu{
+  display:none;position:fixed;inset:0;background:var(--blk);
+  z-index:1100;flex-direction:column;justify-content:center;align-items:center;gap:28px;
+}
+.mob-menu.open{display:flex}
+.mob-menu a{
+  font-family:var(--fd);font-weight:900;
+  font-size:clamp(36px,12vw,64px);
+  letter-spacing:.04em;text-transform:uppercase;
+  color:var(--wht);text-decoration:none;
+  opacity:0;transform:translateY(16px);
+  animation:fadeUp .4s forwards;
+}
+.mob-menu.open a:nth-child(2){animation-delay:.05s}
+.mob-menu.open a:nth-child(3){animation-delay:.1s}
+.mob-menu.open a:nth-child(4){animation-delay:.15s}
+.mob-menu.open a:nth-child(5){animation-delay:.2s}
+.mob-menu.open a:nth-child(6){animation-delay:.25s}
+.mob-x{position:absolute;top:18px;right:40px;font-family:var(--fm);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mut);background:none;border:none;cursor:pointer}
+
+/* HERO */
+#hero{height:100svh;min-height:560px;position:relative;display:flex;align-items:flex-end;overflow:hidden}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(to bottom,rgba(10,10,10,.1) 0%,rgba(10,10,10,.5) 60%,rgba(10,10,10,1) 100%),
+    url('https://images.unsplash.com/photo-1523381294911-8d3cead13475?w=1800&q=90') center/cover no-repeat;
+  transform:scale(1.04);animation:hZoom 10s ease forwards;
+}
+@keyframes hZoom{to{transform:scale(1)}}
+.hero-cnt{position:relative;z-index:2;padding:0 40px 72px;width:100%}
+.h-eyebrow{
+  font-family:var(--fm);font-size:10px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--mut);margin-bottom:14px;
+  opacity:0;animation:fadeUp .7s .2s forwards;
+}
+/* HERO TITLE — key fix: font-size clamped hard, word-break */
+.h-title{
+  font-family:var(--fd);font-weight:900;
+  font-size:clamp(48px,10vw,140px);
+  line-height:.88;text-transform:uppercase;letter-spacing:-.01em;
+  margin-bottom:24px;
+  opacity:0;animation:fadeUp .8s .4s forwards;
+  word-break:break-word;overflow-wrap:break-word;
+}
+.h-title .outline{-webkit-text-stroke:1.5px var(--wht);color:transparent;display:block}
+.h-sub{
+  font-size:13px;font-weight:300;letter-spacing:.04em;
+  color:rgba(245,245,240,.55);max-width:280px;line-height:1.75;
+  margin-bottom:32px;
+  opacity:0;animation:fadeUp .8s .6s forwards;
+}
+.h-ctas{
+  display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+  opacity:0;animation:fadeUp .8s .8s forwards;
+}
+/* BTNS */
+.btn-p{
+  background:var(--wht);color:var(--blk);
+  font-family:var(--fd);font-weight:700;font-size:12px;
+  letter-spacing:.22em;text-transform:uppercase;
+  padding:14px 32px;border:1.5px solid var(--wht);
+  cursor:pointer;text-decoration:none;display:inline-block;
+  transition:background .2s,color .2s,transform .2s;white-space:nowrap;
+}
+.btn-p:hover{background:transparent;color:var(--wht);transform:translateY(-2px)}
+.btn-g{
+  font-family:var(--fm);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(245,245,240,.55);text-decoration:none;
+  display:flex;align-items:center;gap:8px;transition:color .2s;white-space:nowrap;
+}
+.btn-g:hover{color:var(--wht)}
+.btn-g::after{content:'→'}
+.btn-dk{
+  background:var(--blk);color:var(--wht);
+  font-family:var(--fd);font-weight:700;font-size:12px;
+  letter-spacing:.22em;text-transform:uppercase;
+  padding:14px 32px;border:1.5px solid var(--blk);
+  cursor:pointer;text-decoration:none;display:inline-block;
+  transition:background .2s,transform .2s;white-space:nowrap;
+}
+.btn-dk:hover{background:#222;transform:translateY(-2px)}
+/* scroll indicator */
+.h-scroll{
+  position:absolute;bottom:32px;right:40px;
+  font-family:var(--fm);font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--mut);writing-mode:vertical-rl;
+  display:flex;align-items:center;gap:10px;
+  opacity:0;animation:fadeUp 1s 1s forwards;
+}
+.h-scroll::before{content:'';display:block;width:1px;height:40px;background:var(--mut);animation:sp 2.4s 1.5s infinite}
+@keyframes sp{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* MARQUEE */
+.mq-wrap{overflow:hidden;border-top:1px solid var(--mid);border-bottom:1px solid var(--mid);background:#111;padding:11px 0}
+.mq-track{display:flex;animation:mq 22s linear infinite;white-space:nowrap}
+.mq-track:hover{animation-play-state:paused}
+.mi{font-family:var(--fd);font-weight:700;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--mut);padding:0 32px;flex-shrink:0}
+.mi.w{color:var(--wht)}.mi.b{color:var(--blue)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* SECTION */
+.sw{padding:96px 40px}
+.slbl{font-family:var(--fm);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--mut);margin-bottom:12px}
+.stitle{font-family:var(--fd);font-weight:900;font-size:clamp(32px,5.5vw,68px);text-transform:uppercase;line-height:.9;letter-spacing:-.01em}
+
+/* PRODUCT CARD */
+.pc{position:relative;overflow:hidden;cursor:pointer;background:#111}
+.pc-imgw{overflow:hidden;position:relative}
+.pc img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.16,1,.3,1),filter .4s;filter:brightness(.95)}
+.pc:hover img{transform:scale(1.05);filter:brightness(1)}
+.pc-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.92) 0%,transparent 55%);opacity:0;transition:opacity .35s;display:flex;align-items:flex-end;padding:18px}
+.pc:hover .pc-ov{opacity:1}
+.pc-cta{background:var(--wht);color:var(--blk);font-family:var(--fd);font-weight:700;font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:9px 18px;border:none;cursor:pointer;transform:translateY(6px);transition:transform .3s}
+.pc:hover .pc-cta{transform:translateY(0)}
+.pc-badge{position:absolute;top:12px;left:12px;background:var(--blue);color:var(--wht);font-family:var(--fm);font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:3px 9px}
+.pc-info{padding:12px 0 0}
+.pc-name{font-family:var(--fd);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+.pc-sub{font-family:var(--fm);font-size:9px;color:var(--mut);margin-top:2px}
+.pc-price{font-family:var(--fm);font-size:11px;color:var(--wht);margin-top:5px}
+
+/* FEATURED */
+#featured{padding-top:64px}
+.fh{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:44px;flex-wrap:wrap;gap:14px}
+.fh a{font-family:var(--fm);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);text-decoration:none;transition:color .2s;white-space:nowrap}
+.fh a:hover{color:var(--wht)}
+.fg{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
+.fg .pc:first-child{grid-column:span 2;grid-row:span 2}
+.fg .pc:first-child img{aspect-ratio:unset;height:100%;min-height:380px}
+
+/* DROP */
+#drop{background:var(--wht);color:var(--blk)}
+.drop-in{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.drop-ey{font-family:var(--fm);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:#999;margin-bottom:12px}
+.drop-t{
+  font-family:var(--fd);font-weight:900;
+  font-size:clamp(40px,7vw,92px);
+  text-transform:uppercase;line-height:.88;letter-spacing:-.02em;color:var(--blk);
+  margin-bottom:24px;word-break:break-word;
+}
+.drop-t em{font-style:normal;-webkit-text-stroke:1.5px var(--blk);color:transparent}
+.drop-desc{font-size:13px;line-height:1.8;color:#555;max-width:360px;margin-bottom:32px}
+.ctr{display:flex;gap:20px;margin-bottom:32px;flex-wrap:wrap}
+.cti{text-align:center}
+.cn{font-family:var(--fd);font-weight:900;font-size:34px;line-height:1;color:var(--blk);display:block}
+.cl{font-family:var(--fm);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#999}
+.dimgs{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.dimgs img{width:100%;object-fit:cover;filter:brightness(.92);transition:filter .4s}
+.dimgs img:hover{filter:brightness(1)}
+.dimgs img:first-child{grid-column:span 2;aspect-ratio:16/9}
+.dimgs img:not(:first-child){aspect-ratio:1}
+
+/* ABOUT */
+#about{background:var(--grey);position:relative;overflow:hidden}
+.abt-in{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.abt-imgw{position:relative}
+.abt-imgw img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;filter:grayscale(12%)}
+.abt-tag{position:absolute;bottom:0;left:0;right:0;background:rgba(10,10,10,.9);padding:13px 16px;display:flex;justify-content:space-between;align-items:center}
+.abt-tag span{font-family:var(--fm);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+.abt-txt .stitle{margin-bottom:24px}
+.abt-txt p{font-size:13px;line-height:1.85;color:rgba(245,245,240,.6);max-width:380px;margin-bottom:16px}
+.abt-txt p strong{color:var(--wht);font-weight:500}
+.abt-stats{display:flex;gap:36px;flex-wrap:wrap;margin-top:36px;padding-top:36px;border-top:1px solid var(--mid)}
+.sn{font-family:var(--fd);font-weight:900;font-size:40px;line-height:1;color:var(--wht);display:block}
+.sl{font-family:var(--fm);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-top:3px;display:block}
+.bg-ghost{position:absolute;bottom:-24px;right:-16px;font-family:var(--fd);font-weight:900;font-size:clamp(80px,18vw,200px);text-transform:uppercase;color:rgba(255,255,255,.025);pointer-events:none;white-space:nowrap;line-height:1;user-select:none}
+
+/* CONTACT */
+#contact{border-top:1px solid var(--mid)}
+.con-in{display:grid;grid-template-columns:1fr 1fr;gap:72px}
+.con-l p{font-size:13px;line-height:1.8;color:rgba(245,245,240,.5);max-width:320px;margin:20px 0 40px}
+.soclinks{display:flex;flex-direction:column;gap:12px}
+.socl{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--mut);font-family:var(--fm);font-size:10px;letter-spacing:.15em;text-transform:uppercase;transition:color .2s}
+.socl:hover{color:var(--wht)}
+.socl::before{content:'';display:block;width:24px;height:1px;background:currentColor;transition:width .3s}
+.socl:hover::before{width:40px}
+/* form */
+.cfr{position:relative;border-bottom:1px solid var(--mid)}
+.cfr label{position:absolute;top:20px;left:0;font-family:var(--fm);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--mut);transition:top .2s,font-size .2s,color .2s;pointer-events:none}
+.cfr input,.cfr textarea{width:100%;background:none;border:none;padding:34px 0 10px;color:var(--wht);font-family:var(--fb);font-size:13px;outline:none;resize:none}
+.cfr input:focus~label,.cfr input:not(:placeholder-shown)~label,
+.cfr textarea:focus~label,.cfr textarea:not(:placeholder-shown)~label{top:9px;font-size:8px;color:var(--blue)}
+.cfr input::placeholder,.cfr textarea::placeholder{opacity:0}
+.cf-sub{margin-top:32px}
+
+/* FOOTER */
+footer{background:#0f0f0f;border-top:1px solid var(--mid);padding:32px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
+.fcopy{font-family:var(--fm);font-size:9px;letter-spacing:.12em;color:var(--mut)}
+.flinks{display:flex;gap:24px;list-style:none}
+.flinks a{font-family:var(--fm);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--mut);text-decoration:none;transition:color .2s}
+.flinks a:hover{color:var(--wht)}
+
+/* SHOP */
+.shop-hdr{display:flex;justify-content:space-between;align-items:flex-end;padding:64px 40px 36px;flex-wrap:wrap;gap:16px}
+.fbar{display:flex;gap:0;border:1px solid var(--mid);flex-wrap:wrap}
+.fb{font-family:var(--fm);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--mut);background:none;border:none;border-right:1px solid var(--mid);padding:9px 16px;cursor:pointer;transition:color .2s,background .2s;white-space:nowrap}
+.fb:last-child{border-right:none}
+.fb.on{color:var(--blk);background:var(--wht)}
+.fb:hover:not(.on){color:var(--wht)}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:0 40px}
+
+/* PRODUCT */
+.pd-w{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;padding:40px 40px 0}
+.pd-gal{display:grid;grid-template-columns:64px 1fr;gap:8px}
+.pd-tbs{display:flex;flex-direction:column;gap:8px}
+.pd-tb{width:100%;aspect-ratio:3/4;object-fit:cover;cursor:pointer;opacity:.45;transition:opacity .2s;filter:grayscale(20%)}
+.pd-tb.on{opacity:1;filter:none}
+.pd-main img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+.pd-inf{position:sticky;top:100px}
+.back-b{font-family:var(--fm);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--mut);background:none;border:none;cursor:pointer;margin-bottom:24px;display:flex;align-items:center;gap:7px;transition:color .2s}
+.back-b::before{content:'←'}
+.back-b:hover{color:var(--wht)}
+.pd-col{font-family:var(--fm);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.pd-nm{font-family:var(--fd);font-weight:900;font-size:clamp(24px,3.5vw,48px);text-transform:uppercase;line-height:.9;letter-spacing:-.01em;margin-bottom:12px;word-break:break-word}
+.pd-pr{font-family:var(--fd);font-weight:600;font-size:20px;margin-bottom:20px}
+.pd-dc{font-size:13px;line-height:1.85;color:rgba(245,245,240,.55);max-width:340px;margin-bottom:24px;border-left:2px solid var(--mid);padding-left:14px}
+.sz-lb{font-family:var(--fm);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--mut);margin-bottom:9px}
+.szs{display:flex;gap:7px;margin-bottom:24px;flex-wrap:wrap}
+.sz{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid var(--mid);background:none;color:var(--mut);font-family:var(--fm);font-size:9px;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.sz.on{border-color:var(--wht);color:var(--blk);background:var(--wht)}
+.sz:hover:not(.on){border-color:var(--mut);color:var(--wht)}
+.atc{width:100%;background:var(--wht);color:var(--blk);font-family:var(--fd);font-weight:700;font-size:12px;letter-spacing:.22em;text-transform:uppercase;padding:17px;border:none;cursor:pointer;margin-bottom:12px;transition:background .2s,transform .2s}
+.atc:hover{background:#ddd;transform:translateY(-2px)}
+.pd-meta{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--mid);margin-top:24px}
+.pm{padding:12px 0;border-bottom:1px solid var(--mid)}
+.pm:nth-child(odd){border-right:1px solid var(--mid);padding-right:12px}
+.pm:nth-child(even){padding-left:12px}
+.pmk{font-family:var(--fm);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin-bottom:3px}
+.pmv{font-size:12px;color:var(--wht)}
+.rel-w{padding:72px 40px 0}
+.rel-g{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-top:20px}
+
+/* CART */
+.csh{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;opacity:0;pointer-events:none;transition:opacity .3s}
+.csh.on{opacity:1;pointer-events:all}
+.cpan{position:fixed;top:0;right:0;bottom:0;width:min(380px,100vw);background:var(--grey);z-index:2001;transform:translateX(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;border-left:1px solid var(--mid)}
+.cpan.on{transform:translateX(0)}
+.ctop{padding:24px 24px 18px;border-bottom:1px solid var(--mid);display:flex;justify-content:space-between;align-items:center}
+.ctop h2{font-family:var(--fd);font-weight:700;font-size:15px;letter-spacing:.15em;text-transform:uppercase}
+.cx{background:none;border:none;color:var(--mut);font-family:var(--fm);font-size:9px;letter-spacing:.12em;cursor:pointer;transition:color .2s;text-transform:uppercase}
+.cx:hover{color:var(--wht)}
+.cbody{flex:1;overflow-y:auto;padding:18px 24px}
+.cempty{text-align:center;padding:64px 0;color:var(--mut);font-family:var(--fm);font-size:10px;letter-spacing:.15em;text-transform:uppercase}
+.ci{display:grid;grid-template-columns:60px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--mid)}
+.ci img{width:60px;aspect-ratio:3/4;object-fit:cover}
+.cinm{font-family:var(--fd);font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.cisz{font-family:var(--fm);font-size:9px;color:var(--mut);margin-top:2px}
+.cipr{font-family:var(--fm);font-size:10px}
+.cirm{background:none;border:none;color:var(--mut);font-family:var(--fm);font-size:9px;cursor:pointer;display:block;margin-top:5px;transition:color .2s;letter-spacing:.1em;text-transform:uppercase}
+.cirm:hover{color:var(--wht)}
+.cfoot{padding:18px 24px 24px;border-top:1px solid var(--mid)}
+.ctr-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.ctr-row span:first-child{font-family:var(--fm);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+.ctr-row span:last-child{font-family:var(--fd);font-weight:700;font-size:17px}
+.chkb{width:100%;background:var(--wht);color:var(--blk);font-family:var(--fd);font-weight:700;font-size:12px;letter-spacing:.22em;text-transform:uppercase;padding:16px;border:none;cursor:pointer;transition:background .2s}
+.chkb:hover{background:#e2e2da}
+
+/* TOAST */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--wht);color:var(--blk);font-family:var(--fm);font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:12px 24px;z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* REVEAL */
+.rev{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.rev.vis{opacity:1;transform:none}
+.rev.d1{transition-delay:.1s}.rev.d2{transition-delay:.2s}.rev.d3{transition-delay:.3s}
+
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .fg{grid-template-columns:repeat(2,1fr)}
+  .fg .pc:first-child{grid-column:span 2}
+  .drop-in,.abt-in,.con-in{gap:40px}
+  .sg{grid-template-columns:repeat(2,1fr)}
+  .rel-g{grid-template-columns:repeat(2,1fr)}
+  .pd-w{gap:36px}
+}
+@media(max-width:768px){
+  nav{padding:16px 20px}
+  nav.stuck{padding:12px 20px}
+  .nav-links,.nbtn{display:none}
+  .ham{display:flex}
+  .sw{padding:64px 20px}
+  .hero-cnt{padding:0 20px 56px}
+  .h-scroll{right:20px}
+  footer{padding:24px 20px}
+  .shop-hdr{padding:56px 20px 28px}
+  .sg{grid-template-columns:1fr 1fr;padding:0 20px;gap:2px}
+  .drop-in{grid-template-columns:1fr}
+  .dimgs{order:-1}
+  .abt-in,.con-in{grid-template-columns:1fr}
+  .fg{grid-template-columns:1fr 1fr}
+  .fg .pc:first-child{grid-column:span 2}
+  .pd-w{grid-template-columns:1fr;padding:18px 20px 0;gap:24px}
+  .pd-gal{grid-template-columns:1fr}
+  .pd-tbs{flex-direction:row}
+  .pd-tb{width:56px;aspect-ratio:1}
+  .rel-w{padding:56px 20px 0}
+  .rel-g{grid-template-columns:1fr 1fr}
+  .flinks{display:none}
+  .mob-x{right:20px}
+  .cur,.curR{display:none}
+  body{cursor:auto}
+}
+@media(max-width:480px){
+  .fg{grid-template-columns:1fr}
+  .fg .pc:first-child{grid-column:1}
+  .h-title{font-size:clamp(44px,14vw,72px)}
+  .abt-stats{gap:24px}
+  .sg{grid-template-columns:1fr}
+  .rel-g{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="cur" id="cur"></div>
+<div class="curR" id="curR"></div>
+<div class="toast" id="toast"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="logo-lnk" href="#" onclick="gp('home')">
+    <svg class="logo-svg" viewBox="0 0 190 38" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <text x="0" y="33" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="white">aizo</text>
+      <text x="72" y="22" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="18" fill="#5B6BF8">&amp;</text>
+      <rect x="78" y="11" width="112" height="26" fill="white"/>
+      <text x="84" y="33" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="28" fill="#0a0a0a">carra</text>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="gp('home')">Home</a></li>
+    <li><a href="#" onclick="gp('shop')">Shop</a></li>
+    <li><a href="#about">Nosotros</a></li>
+    <li><a href="#contact">Contacto</a></li>
+  </ul>
+  <div class="nav-r">
+    <button class="nbtn" id="cartBtn" onclick="toggleCart()">BOLSA (0)</button>
+    <button class="ham" id="hamBtn" onclick="toggleMob()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mob-menu" id="mobMenu">
+  <button class="mob-x" onclick="toggleMob()">✕ CERRAR</button>
+  <a href="#" onclick="mn('home')">HOME</a>
+  <a href="#" onclick="mn('shop')">SHOP</a>
+  <a href="#about" onclick="toggleMob()">NOSOTROS</a>
+  <a href="#contact" onclick="toggleMob()">CONTACTO</a>
+  <a href="#" onclick="mn('cart')">BOLSA</a>
+</div>
+
+<!-- CART -->
+<div class="csh" id="csh" onclick="toggleCart()"></div>
+<div class="cpan" id="cpan">
+  <div class="ctop"><h2>Tu bolsa</h2><button class="cx" onclick="toggleCart()">CERRAR ✕</button></div>
+  <div class="cbody" id="cbody"><div class="cempty">Tu bolsa está vacía</div></div>
+  <div class="cfoot" id="cfoot" style="display:none">
+    <div class="ctr-row"><span>Total</span><span id="ctotal">L. 0.00</span></div>
+    <button class="chkb" onclick="toast('Escríbenos por Instagram @aizocarra para coordinar tu pedido 🔥')">FINALIZAR COMPRA →</button>
+  </div>
+</div>
+
+<!-- ===== HOME ===== -->
+<div id="homePage">
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-cnt">
+      <p class="h-eyebrow">DROP 001 — 2025</p>
+      <h1 class="h-title">
+        VISTE<br>
+        <span class="outline">EL</span><br>
+        RUIDO
+      </h1>
+      <p class="h-sub">Camisas que hablan antes que tú. Gráfico real, actitud propia.</p>
+      <div class="h-ctas">
+        <a href="#" class="btn-p" onclick="gp('shop')">SHOP NOW</a>
+        <a href="#drop" class="btn-g">Ver Drop 001</a>
+      </div>
+    </div>
+    <div class="h-scroll">Scroll</div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="mq-wrap"><div class="mq-track" id="mqt"></div></div>
+
+  <!-- FEATURED -->
+  <section id="featured" class="sw">
+    <div class="fh rev">
+      <div><p class="slbl">Drop 001</p><h2 class="stitle">PIEZAS<br>DESTACADAS</h2></div>
+      <a href="#" onclick="gp('shop')">Ver todo →</a>
+    </div>
+    <div class="fg" id="featG"></div>
+  </section>
+
+  <!-- DROP -->
+  <section id="drop" class="sw">
+    <div class="drop-in">
+      <div>
+        <p class="drop-ey rev">Colección actual</p>
+        <h2 class="drop-t rev d1">DROP<br><em>001</em></h2>
+        <p class="drop-desc rev d2">No es ropa. Es una declaración. Gráficos que dicen lo que no siempre se puede decir. Piezas contadas, identidad fuerte.</p>
+        <div class="ctr rev d2">
+          <div class="cti"><span class="cn" id="cD">--</span><span class="cl">Días</span></div>
+          <div class="cti"><span class="cn" id="cH">--</span><span class="cl">Horas</span></div>
+          <div class="cti"><span class="cn" id="cM">--</span><span class="cl">Mins</span></div>
+          <div class="cti"><span class="cn" id="cS">--</span><span class="cl">Segs</span></div>
+        </div>
+        <a href="#" class="btn-dk rev d3" onclick="gp('shop')">COMPRAR AHORA</a>
+      </div>
+      <div class="dimgs rev d1">
+        <img src="https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=900&q=85" alt="Drop 001">
+        <img src="https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=500&q=85" alt="Drop 001">
+        <img src="https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=500&q=85" alt="Drop 001">
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="sw">
+    <div class="abt-in">
+      <div class="abt-imgw rev">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=85" alt="Fundadores">
+        <div class="abt-tag"><span>aizo &amp; carra</span><span>Honduras — 2024</span></div>
+      </div>
+      <div class="abt-txt">
+        <p class="slbl rev">Quiénes somos</p>
+        <h2 class="stitle rev d1">SIN FILTROS,<br>CON ESTILO</h2>
+        <div class="rev d2">
+          <p>Dos amigos, una idea clara: <strong>que la ropa sea tan directa como lo que pensamos.</strong> aizo&amp;carra nació en Honduras en 2024, frustrados de no encontrar lo que queríamos vestir.</p>
+          <p>Hacemos <strong>drops, no colecciones eternas.</strong> Piezas pensadas, gráficos con significado, ropa que dice algo. Si no te provoca nada, no la hacemos.</p>
+        </div>
+        <div class="abt-stats rev d3">
+          <div><span class="sn">001</span><span class="sl">Drops</span></div>
+          <div><span class="sn">100%</span><span class="sl">Diseño propio</span></div>
+          <div><span class="sn">HN</span><span class="sl">Origen</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="bg-ghost">AIZO</div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="sw">
+    <div class="con-in">
+      <div class="con-l">
+        <p class="slbl rev">Contáctanos</p>
+        <h2 class="stitle rev d1">HAY<br>QUE<br>HABLAR</h2>
+        <p class="rev d2">Pedidos, colabs, preguntas. Respondemos en Instagram lo antes posible.</p>
+        <div class="soclinks rev d3">
+          <a href="https://instagram.com/aizocarra" target="_blank" class="socl">@aizocarra — Instagram</a>
+          <a href="mailto:hola@aizocarra.com" class="socl">hola@aizocarra.com</a>
+          <a href="https://wa.me/50488000000" target="_blank" class="socl">WhatsApp</a>
+        </div>
+      </div>
+      <div class="rev d1">
+        <div class="cfr"><input type="text" id="fn" placeholder="."><label for="fn">Nombre</label></div>
+        <div class="cfr"><input type="email" id="fe" placeholder="."><label for="fe">Correo</label></div>
+        <div class="cfr"><textarea id="fm" rows="4" placeholder="."></textarea><label for="fm">Mensaje</label></div>
+        <div class="cf-sub"><button class="btn-p" onclick="sendForm()">ENVIAR →</button></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <a class="logo-lnk" href="#" onclick="gp('home')">
+      <svg viewBox="0 0 190 38" xmlns="http://www.w3.org/2000/svg" height="22" fill="none">
+        <text x="0" y="33" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="white">aizo</text>
+        <text x="72" y="22" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="18" fill="#5B6BF8">&amp;</text>
+        <rect x="78" y="11" width="112" height="26" fill="white"/>
+        <text x="84" y="33" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="28" fill="#0a0a0a">carra</text>
+      </svg>
+    </a>
+    <p class="fcopy">© 2025 aizo&amp;carra. Todos los derechos reservados.</p>
+    <ul class="flinks"><li><a href="#">Envíos</a></li><li><a href="#">Devoluciones</a></li><li><a href="https://instagram.com" target="_blank">Instagram</a></li></ul>
+  </footer>
+</div>
+
+<!-- ===== SHOP PAGE ===== -->
+<div id="shopPage" style="display:none">
+  <div class="shop-hdr">
+    <div><p class="slbl">Todos los productos</p><h2 class="stitle">SHOP</h2></div>
+    <div class="fbar">
+      <button class="fb on" onclick="fs('all',this)">TODO</button>
+      <button class="fb" onclick="fs('careculo',this)">CARECULO</button>
+      <button class="fb" onclick="fs('frase',this)">FRASES</button>
+      <button class="fb" onclick="fs('basic',this)">BASICS</button>
+    </div>
+  </div>
+  <div class="sg" id="shopG"></div>
+  <footer style="margin-top:72px">
+    <a class="logo-lnk" href="#" onclick="gp('home')">
+      <svg viewBox="0 0 190 38" xmlns="http://www.w3.org/2000/svg" height="22" fill="none">
+        <text x="0" y="33" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="white">aizo</text>
+        <text x="72" y="22" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="18" fill="#5B6BF8">&amp;</text>
+        <rect x="78" y="11" width="112" height="26" fill="white"/>
+        <text x="84" y="33" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="28" fill="#0a0a0a">carra</text>
+      </svg>
+    </a>
+    <p class="fcopy">© 2025 aizo&amp;carra.</p>
+    <ul class="flinks"><li><a href="#">Envíos</a></li><li><a href="https://instagram.com" target="_blank">Instagram</a></li></ul>
+  </footer>
+</div>
+
+<!-- ===== PRODUCT PAGE ===== -->
+<div id="productPage" style="display:none">
+  <div class="pd-w" id="pdW"></div>
+  <div class="rel-w"><p class="slbl">También te puede gustar</p><div class="rel-g" id="relG"></div></div>
+  <footer style="margin-top:72px">
+    <a class="logo-lnk" href="#" onclick="gp('home')">
+      <svg viewBox="0 0 190 38" xmlns="http://www.w3.org/2000/svg" height="22" fill="none">
+        <text x="0" y="33" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="34" fill="white">aizo</text>
+        <text x="72" y="22" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="18" fill="#5B6BF8">&amp;</text>
+        <rect x="78" y="11" width="112" height="26" fill="white"/>
+        <text x="84" y="33" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="28" fill="#0a0a0a">carra</text>
+      </svg>
+    </a>
+    <p class="fcopy">© 2025 aizo&amp;carra.</p>
+    <ul class="flinks"><li><a href="#">Envíos</a></li><li><a href="https://instagram.com" target="_blank">Instagram</a></li></ul>
+  </footer>
+</div>
+
+<script>
+/* ---- PRODUCTS (imágenes locales con fallback Unsplash) ---- */
+const FBK='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700&q=85';
+const FBK2='https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=700&q=85';
+const FBK3='https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=700&q=85';
+
+const PRODS=[
+  {id:1,name:'CARECULO — NEGRO',price:'L. 450',num:450,
+   cat:'careculo',badge:'DROP 001',
+   imgs:[FBK,FBK2],
+   desc:'La pieza que define el Drop 001. Gráfico multicolor explosivo sobre negro. CARECULO: hacer mala cara, tener buena actitud. La contradicción hecha camisa.',
+   col:'Drop 001',
+   meta:{Material:'100% Algodón',Fit:'Regular',Cuello:'Redondo',Origen:'Honduras'}},
+  {id:2,name:'CARECULO — BLANCO',price:'L. 450',num:450,
+   cat:'careculo',badge:'DROP 001',
+   imgs:[FBK2,FBK],
+   desc:'El mismo gráfico explosivo, tela blanca. El contraste que necesitas. Mismo mensaje, otra energía.',
+   col:'Drop 001',
+   meta:{Material:'100% Algodón',Fit:'Regular',Cuello:'Redondo',Origen:'Honduras'}},
+  {id:3,name:'NO SOY PERFECTO — ING.',price:'L. 420',num:420,
+   cat:'frase',badge:null,
+   imgs:[FBK3],
+   desc:'"No soy perfecto, pero soy ingeniero — que es casi lo mismo." Para los que saben lo que valen. Tipografía bold, impacto directo.',
+   col:'Colección Frases',
+   meta:{Material:'100% Algodón',Fit:'Regular',Color:'Gris marengo',Origen:'Honduras'}},
+  {id:4,name:'CAMISA PERSONALIZADA',price:'L. 400+',num:400,
+   cat:'basic',badge:'A LA ORDEN',
+   imgs:['https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=700&q=85'],
+   desc:'¿Tienes una idea? La hacemos realidad. Tu texto, tu diseño, tu concepto. Escríbenos y coordinamos.',
+   col:'Custom',
+   meta:{Mínimo:'1 pieza',Tiempo:'5–7 días',Colores:'A elegir',Origen:'Honduras'}},
+  {id:5,name:'CARECULO PACK x2',price:'L. 780',num:780,
+   cat:'careculo',badge:'AHORRO',
+   imgs:[FBK,FBK2],
+   desc:'Las dos versiones juntas — negro y blanco. El pack completo para los que van en serio con la actitud.',
+   col:'Drop 001',
+   meta:{Incluye:'Negro + Blanco',Ahorro:'L. 120',Fit:'Regular',Origen:'Honduras'}},
+  {id:6,name:'LOGO TEE — BÁSICA',price:'L. 380',num:380,
+   cat:'basic',badge:null,
+   imgs:[FBK3,FBK],
+   desc:'La base de todo. Logo aizo&carra en pecho izquierdo. Minimal, limpia, versátil.',
+   col:'Basics',
+   meta:{Material:'100% Algodón',Logo:'Pecho izquierdo',Fit:'Regular',Origen:'Honduras'}}
+];
+
+/* ---- MARQUEE ---- */
+const MIS=[
+  {t:'aizo&carra',c:'w'},{t:'Drop 001',c:''},{t:'CARECULO',c:'b'},
+  {t:'Honduras 🇭🇳',c:''},{t:'Diseño Propio',c:'w'},{t:'Edición Limitada',c:''},
+  {t:'Streetwear',c:'b'},{t:'Envíos Disponibles',c:''}
+];
+const full=[...MIS,...MIS,...MIS,...MIS];
+document.getElementById('mqt').innerHTML=full.map(i=>`<span class="mi ${i.c}">${i.t}</span>`).join('');
+
+/* ---- CURSOR ---- */
+const CUR=document.getElementById('cur'),CRR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+(function loop(){
+  CUR.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`;
+  rx+=(mx-rx)*.09;ry+=(my-ry)*.09;
+  CRR.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;
+  requestAnimationFrame(loop);
+})();
+document.querySelectorAll('a,button,.pc,.sz').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{CUR.classList.add('big');CRR.classList.add('big')});
+  el.addEventListener('mouseleave',()=>{CUR.classList.remove('big');CRR.classList.remove('big')});
+});
+
+/* ---- NAV SCROLL ---- */
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('stuck',scrollY>50)});
+
+/* ---- REVEAL ---- */
+const ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.1});
+function initRev(){document.querySelectorAll('.rev:not(.vis)').forEach(el=>ro.observe(el))}
+initRev();
+
+/* ---- COUNTDOWN ---- */
+(function ct(){
+  const d=new Date('2025-08-15T00:00:00')-new Date();
+  if(d>0){
+    const pad=n=>String(n).padStart(2,'0');
+    document.getElementById('cD').textContent=pad(Math.floor(d/86400000));
+    document.getElementById('cH').textContent=pad(Math.floor(d%86400000/3600000));
+    document.getElementById('cM').textContent=pad(Math.floor(d%3600000/60000));
+    document.getElementById('cS').textContent=pad(Math.floor(d%60000/1000));
+  }
+  setTimeout(ct,1000);
+})();
+
+/* ---- PAGE ROUTER ---- */
+function gp(pg){
+  ['homePage','shopPage','productPage'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById(pg+'Page').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(pg==='shop')renderShop();
+  setTimeout(initRev,100);
+}
+
+/* ---- CARD ---- */
+function card(p){
+  return`<div class="pc" onclick="showProd(${p.id})">
+    ${p.badge?`<span class="pc-badge">${p.badge}</span>`:''}
+    <div class="pc-imgw">
+      <img src="${p.imgs[0]}" alt="${p.name}" loading="lazy" onerror="this.src='${FBK}'">
+      <div class="pc-ov"><button class="pc-cta" onclick="event.stopPropagation();qadd(${p.id})">AÑADIR</button></div>
+    </div>
+    <div class="pc-info">
+      <div class="pc-name">${p.name}</div>
+      <div class="pc-sub">${p.col}</div>
+      <div class="pc-price">${p.price}</div>
+    </div>
+  </div>`;
+}
+
+/* ---- FEATURED ---- */
+document.getElementById('featG').innerHTML=PRODS.slice(0,5).map(card).join('');
+
+/* ---- SHOP ---- */
+let AF='all';
+function renderShop(f=AF){
+  const list=f==='all'?PRODS:PRODS.filter(p=>p.cat===f);
+  document.getElementById('shopG').innerHTML=list.map(card).join('');
+  setTimeout(initRev,80);
+}
+function fs(f,btn){
+  AF=f;
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderShop(f);
+}
+
+/* ---- PRODUCT PAGE ---- */
+let SP=null,SS=null;
+function showProd(id){
+  SP=PRODS.find(p=>p.id===id);SS=null;
+  gp('product');
+  document.getElementById('relG').innerHTML=PRODS.filter(p=>p.id!==id).slice(0,4).map(card).join('');
+  const thumbs=SP.imgs.map((s,i)=>
+    `<img src="${s}" class="pd-tb${i===0?' on':''}" onerror="this.src='${FBK}'" onclick="setMain('${s}',this)" alt="">`
+  ).join('');
+  const meta=Object.entries(SP.meta).map(([k,v])=>
+    `<div class="pm"><div class="pmk">${k}</div><div class="pmv">${v}</div></div>`
+  ).join('');
+  document.getElementById('pdW').innerHTML=`
+    <div class="pd-gal">
+      <div class="pd-tbs">${thumbs}</div>
+      <div class="pd-main"><img id="mainImg" src="${SP.imgs[0]}" alt="${SP.name}" onerror="this.src='${FBK}'"></div>
+    </div>
+    <div class="pd-inf">
+      <button class="back-b" onclick="gp('shop')">Volver al shop</button>
+      <p class="pd-col">${SP.col}</p>
+      <h1 class="pd-nm">${SP.name}</h1>
+      <p class="pd-pr">${SP.price}</p>
+      <p class="pd-dc">${SP.desc}</p>
+      <p class="sz-lb">Selecciona tu talla</p>
+      <div class="szs">${['XS','S','M','L','XL','XXL'].map(s=>`<button class="sz" onclick="pksz(this,'${s}')">${s}</button>`).join('')}</div>
+      <button class="atc" onclick="addCart()">AÑADIR A LA BOLSA</button>
+      <div class="pd-meta">${meta}</div>
+    </div>`;
+  setTimeout(initRev,100);
+}
+function setMain(src,el){
+  document.getElementById('mainImg').src=src;
+  document.querySelectorAll('.pd-tb').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+}
+function pksz(btn,s){
+  document.querySelectorAll('.sz').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');SS=s;
+}
+
+/* ---- CART ---- */
+let cart=[];
+function addCart(){
+  if(!SS){toast('Selecciona una talla primero');return;}
+  cart.push({...SP,size:SS});
+  updateCart();toggleCart();
+}
+function qadd(id){
+  const p=PRODS.find(x=>x.id===id);
+  cart.push({...p,size:'M'});
+  updateCart();toast(`${p.name} — talla M añadida ✓`);
+}
+function rmItem(i){cart.splice(i,1);updateCart();}
+function updateCart(){
+  const n=cart.length;
+  document.getElementById('cartBtn').textContent=`BOLSA (${n})`;
+  const body=document.getElementById('cbody'),foot=document.getElementById('cfoot');
+  if(!n){body.innerHTML='<div class="cempty">Tu bolsa está vacía</div>';foot.style.display='none';return;}
+  foot.style.display='block';
+  body.innerHTML=cart.map((it,i)=>`
+    <div class="ci">
+      <img src="${it.imgs[0]}" alt="${it.name}" onerror="this.src='${FBK}'">
+      <div><div class="cinm">${it.name}</div><div class="cisz">Talla ${it.size}</div><button class="cirm" onclick="rmItem(${i})">QUITAR</button></div>
+      <div class="cipr">${it.price}</div>
+    </div>`).join('');
+  document.getElementById('ctotal').textContent=`L. ${cart.reduce((s,it)=>s+it.num,0).toFixed(2)}`;
+}
+function toggleCart(){
+  document.getElementById('csh').classList.toggle('on');
+  document.getElementById('cpan').classList.toggle('on');
+}
+
+/* ---- MOBILE MENU ---- */
+function toggleMob(){document.getElementById('mobMenu').classList.toggle('open');}
+function mn(pg){toggleMob();if(pg==='cart')setTimeout(toggleCart,200);else gp(pg);}
+
+/* ---- FORM ---- */
+function sendForm(){
+  const n=document.getElementById('fn').value.trim();
+  const e=document.getElementById('fe').value.trim();
+  const m=document.getElementById('fm').value.trim();
+  if(!n||!e||!m){toast('Completa todos los campos');return;}
+  toast('¡Mensaje enviado! Te respondemos pronto 🙌');
+  document.getElementById('fn').value='';
+  document.getElementById('fe').value='';
+  document.getElementById('fm').value='';
+}
+
+/* ---- TOAST ---- */
+let TT;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('on');
+  clearTimeout(TT);TT=setTimeout(()=>el.classList.remove('on'),3000);
+}
+
+/* init */
+setTimeout(initRev,350);
+</script>
+</body>
+</html>
